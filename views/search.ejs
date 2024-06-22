@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/static/style.css">
+    <link rel="stylesheet" type="text/css" href="/static/animasi.css">
     <title>Tangki Sahabat Sentarum</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -16,21 +17,40 @@
 <body>
     <!-- NAV -->
     <nav>
-        <a href="/dashboard"><img src="/static/assets/logo.png" alt="" class="logo"></a>
+        <a href="/index"><img src="/static/assets/logo.png" alt="" class="logo"></a>
         <ul id="menu-links">
             <!-- source icon dari https://icons8.com/icons/ -->
-            <li class="btn-home"><a href="/dashboard">Home</a></li>
+            <li class="btn-home"><a href="/index">Home</a></li>
             <li class="btn-product"><a href="/product">Product</a></li>
             <li class="btn-about"><a href="/about">About</a></li>
             <li class="btn-contact"><a href="/contact">Contact</a></li>
         </ul>
-        <div class="nav-btn"><a href=""><img src="/static/assets/search.png" alt=""></a><input type="text"
-                id="search-input" placeholder="Cari produk..."></div>
+        <div class="nav-btn"><a href="" id="Search">
+            <img src="/static/assets/search.png" alt="" id="Search">
+        </a>
+        <form action="/search" method="GET">
+            <input type="text" id="term" placeholder="Cari produk..." name="term">
+        </form>
+
+    </div>
+    <div class="user"><a href="/base"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+                viewBox="0 0 24 24">
+                <path
+                    d="M12 2C6.579 2 2 6.579 2 12s4.579 10 10 10 10-4.579 10-10S17.421 2 12 2zm0 5c1.727 0 3 1.272 3 3s-1.273 3-3 3c-1.726 0-3-1.272-3-3s1.274-3 3-3zm-5.106 9.772c.897-1.32 2.393-2.2 4.106-2.2h2c1.714 0 3.209.88 4.106 2.2C15.828 18.14 14.015 19 12 19s-3.828-.86-5.106-2.228z" />
+    </svg></a></div>
     </nav>
 
     <!-- ISI (Cards) -->
     <div class="container2">
-        <div id="cards"></div>
+        <div id="cards">
+            <% data.forEach(prod => { %>
+                <div class="card">
+                    <img src="<%= prod.img %>" alt="">
+                    <h3 class="product-name"><%= prod.name %></h3>
+                    <a href="https://wa.link/4on5b0" target ="_blank"><div class="buy-now">BUY NOW!</div></a>
+                </div>
+            <% }); %>
+        </div>
     </div>
 
 
@@ -73,111 +93,6 @@
 
     </footer>
     <script>
-        const products = [
-            { id: 1, name: "TB 350", img: "assets/product/350.png" },
-            { id: 2, name: "TB 400", img: "assets/product/400.png" },
-            { id: 3, name: "TB 550", img: "assets/product/550.png" },
-            { id: 4, name: "TB 600", img: "assets/product/600.png" },
-            { id: 5, name: "TB 800", img: "assets/product/800.png" },
-            { id: 6, name: "TB 900", img: "assets/product/900.png" },
-            { id: 7, name: "TB 1100", img: "assets/product/1100.png" },
-            { id: 8, name: "TB 1101S", img: "assets/product/1101S.png" },
-            { id: 9, name: "TB 1150", img: "assets/product/1150.png" },
-            { id: 10, name: "TB 2200", img: "assets/product/2200.png" },
-            { id: 11, name: "TB 2500", img: "assets/product/2500.png" },
-            { id: 12, name: "TB 3300", img: "assets/product/3300.png" },
-            { id: 13, name: "TB 3500", img: "assets/product/3500.png" },
-            { id: 14, name: "TB 5500", img: "assets/product/5500.png" },
-            { id: 15, name: "Rucika AW", img: "assets/product/Rucika AW.png" },
-            { id: 16, name: "Rucika D", img: "assets/product/Rucika D.png" },
-            { id: 17, name: "Elbow Out (45°)", img: "assets/product/45 derajat elbow_out.png" },
-            { id: 18, name: "Elbow Out", img: "assets/product/elbow_out.png" },
-            { id: 19, name: "Reducing Socket Out", img: "assets/product/Reducing socket_out.png" },
-            { id: 20, name: "Socket Out", img: "assets/product/socket_out.png" },
-            { id: 21, name: "Tee", img: "assets/product/Tee.png" },
-            { id: 22, name: "Valve Socket Out", img: "assets/product/valve socket_out.png" },
-            { id: 23, name: "Batu", img: "assets/product/batu.png" },
-            { id: 24, name: "Pasir Kerang", img: "assets/product/pasir.png" },
-            { id: 25, name: "Ijuk", img: "assets/product/ijuk.png" },
-            { id: 26, name: "Arang", img: "assets/product/arang.png" },
-
-        ];
-
-
-
-        function displayProducts(products) {
-            const productList = document.getElementById("cards");
-            productList.innerHTML = "";
-
-            products.forEach(product => {
-                const productItem = document.createElement("div");
-                productItem.innerHTML = `
-                <div class="card"> 
-                    <img src="${product.img}" alt="">
-                    <h3 class="product-name">${product.name}</h3>
-                    <a href=""><div class="buy-now">BUY NOW!</div></a>
-                </div>
-                `;
-                productList.appendChild(productItem);
-            });
-        }
-
-        displayProducts(products);
-
-        const urlParams = new URLSearchParams(window.location.search);
-        var inputData = urlParams.get('data');
-        if (inputData.toLowerCase() == "tangki" || inputData.toLowerCase() == "tangki air") {
-            inputData = "tb";
-        } else if (inputData.toLowerCase() == "pipa") {
-            inputData = "rucika";
-        }
-
-        const searchInput = document.getElementById("search-input");
-        let flag = inputData != null;
-        var usersearch;
-        if (flag) {
-            usersearch = inputData;
-        } else {
-            usersearch = searchInput;
-        }
-
-        if (flag) {
-            const searchInput = inputData;
-            const searchKeyword = searchInput.toLowerCase();
-            const filteredProducts = products.filter(product =>
-                product.name.toLowerCase().includes(searchKeyword)
-            );
-
-            if (filteredProducts.length === 0) {
-                displayNothing();
-            } else {
-                displayProducts(filteredProducts);
-            }
-
-            function displayNothing() {
-                const productList = document.getElementById("cards");
-                productList.innerHTML = `<h2>Tidak dapat menemukan hasil!</h2>`;
-            }
-            flag = false;
-        }
-
-        searchInput.addEventListener("input", function () {
-            const searchKeyword = this.value.toLowerCase();
-            const filteredProducts = products.filter(product =>
-                product.name.toLowerCase().includes(searchKeyword)
-            );
-
-            if (filteredProducts.length === 0) {
-                displayNothing();
-            } else {
-                displayProducts(filteredProducts);
-            }
-        });
-
-        function displayNothing() {
-            const productList = document.getElementById("cards");
-            productList.innerHTML = `<h2>Tidak dapat menemukan hasil!</h2>`;
-        } 
     </script>
 </body>
 

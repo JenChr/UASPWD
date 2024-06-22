@@ -2,7 +2,6 @@
 
 body {
     font-family: 'Open Sans', sans-serif;
-    background-image: url('/assets/background_png.png');
     background-size: cover;
     background-repeat: no-repeat;
 }
@@ -13,10 +12,6 @@ body {
 
 .btn.btn-success {
     padding: .4em 2em;
-}
-
-form {
-    padding: 0 3em;
 }
 
 #login .title>span {
@@ -85,11 +80,26 @@ nav .logo {
 #search-input {
     border: none;
     cursor: text;
+    text-decoration: none;
+    outline: none;
 }
 
 #search-input:focus {
     border: none;
     cursor: text;
+    outline: none;
+}
+
+.search {
+    display: flex;
+    flex-direction: column;
+    cursor: text;
+}
+
+nav input {
+    border: none;
+    cursor: text;
+    text-decoration: none;
     outline: none;
 }
 
@@ -161,6 +171,7 @@ nav .logo {
 
 #cards {
     width: 83%;
+    margin-left: 6%;
     padding-top: 30px;
     font-size: 20px;
     display: flex;
@@ -168,12 +179,13 @@ nav .logo {
     flex-wrap: wrap;
     align-items: center;
     z-index: 1;
+    /* justify-content: center; */
 }
 
 .card {
     border-radius: 26px;
     margin-top: 20px;
-    width: 270px;
+    width: 250px;
     margin: 3vh 3vh;
     box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
     text-decoration: none;
@@ -213,7 +225,7 @@ nav .logo {
     font-weight: 700;
     color: white;
     background: #105098;
-    width: 270px;
+    width: 250px;
     height: 50px;
     border-radius: 0 0 26px 26px;
 }

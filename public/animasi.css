@@ -52,7 +52,6 @@ nav .logo {
     border: 0;
     outline: 0;
     border-radius: 40px;
-    cursor: pointer;
 }
 
 .nav-btn {
@@ -74,6 +73,12 @@ nav .logo {
 }
 
 #search-input:focus {
+    border: none;
+    cursor: text;
+    outline: none;
+}
+
+nav input {
     border: none;
     cursor: text;
     outline: none;

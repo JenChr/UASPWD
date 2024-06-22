@@ -18,29 +18,27 @@
 <body>
     <!-- Wrapped (Login Form) -->
     <div class="container">
-        <form action="/route/login" method="post">
+        <form action="/base" method="post" id="loginForm">
             <h1>Login</h1>
             <div class="input">
-                <input type="text" name="user" placeholder="Username" required>
+                <input type="text" id="user" name="user" placeholder="Username" required>
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                    <path
-                        d="M12 2C6.579 2 2 6.579 2 12s4.579 10 10 10 10-4.579 10-10S17.421 2 12 2zm0 5c1.727 0 3 1.272 3 3s-1.273 3-3 3c-1.726 0-3-1.272-3-3s1.274-3 3-3zm-5.106 9.772c.897-1.32 2.393-2.2 4.106-2.2h2c1.714 0 3.209.88 4.106 2.2C15.828 18.14 14.015 19 12 19s-3.828-.86-5.106-2.228z" />
+                    <path d="M12 2C6.579 2 2 6.579 2 12s4.579 10 10 10 10-4.579 10-10S17.421 2 12 2zm0 5c1.727 0 3 1.272 3 3s-1.273 3-3 3c-1.726 0-3-1.272-3-3s1.274-3 3-3zm-5.106 9.772c.897-1.32 2.393-2.2 4.106-2.2h2c1.714 0 3.209.88 4.106 2.2C15.828 18.14 14.015 19 12 19s-3.828-.86-5.106-2.228z" />
                 </svg>
             </div>
             <div class="input">
-                <input type="password" name="password" placeholder="Password" required>
+                <input type="password" id="password" name="password" placeholder="Password" required>
                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
-                    <path
-                        d="M20 12c0-1.103-.897-2-2-2h-1V7c0-2.757-2.243-5-5-5S7 4.243 7 7v3H6c-1.103 0-2 .897-2 2v8c0 1.103.897 2 2 2h12c1.103 0 2-.897 2-2v-8zM9 7c0-1.654 1.346-3 3-3s3 1.346 3 3v3H9V7z" />
+                    <path d="M20 12c0-1.103-.897-2-2-2h-1V7c0-2.757-2.243-5-5-5S7 4.243 7 7v3H6c-1.103 0-2 .897-2 2v8c0 1.103.897 2 2 2h12c1.103 0 2-.897 2-2v-8zM9 7c0-1.654 1.346-3 3-3s3 1.346 3 3v3H9V7z" />
                 </svg>
             </div>
             <div class="remember">
-                <label for=""><input type="checkbox" name="" id="">Remember me</label>
+                <label><input type="checkbox" id="remember" name="remember">Remember me</label>
                 <a href="#">Forgot password?</a>
             </div>
             <button type="submit" class="btn-submit">Login</button>
-
         </form>
+        
     </div>
 
     <div class="box">
@@ -55,7 +53,33 @@
     </div>
 
 
-    <!-- Footer -->
-</body>
+    <!-- Script -->
+     <script>
+        document.addEventListener('DOMContentLoaded', () => {
+        const userInput = document.getElementById('user');
+        const passwordInput = document.getElementById('password');
+        const rememberCheckbox = document.getElementById('remember');
 
+        const storedUsername = localStorage.getItem('remembered_username');
+        const storedPassword = localStorage.getItem('remembered_password');
+
+        if (storedUsername) {
+            userInput.value = storedUsername;
+            if (storedPassword) {
+            passwordInput.value = storedPassword;
+            }
+            rememberCheckbox.checked = true;
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', (event) => {
+            if (rememberCheckbox.checked) {
+                localStorage.setItem('remembered_username', userInput.value);
+                localStorage.setItem('remembered_password', passwordInput.value);
+            } else {
+                localStorage.removeItem('remembered_username');
+                localStorage.removeItem('remembered_password');
+            }});
+        });
+     </script>
+</body>
 </html>

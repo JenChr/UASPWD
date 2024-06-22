@@ -4,76 +4,30 @@ const bodyparser = require("body-parser");
 const session = require("express-session");
 const { v4: uuidv4 } = require("uuid");
 
-const router = require('./router');
-
 const app = express();
-
 const port = process.env.PORT || 3000;
 
-app.use(bodyparser.json());
-app.use(bodyparser.urlencoded({ extended: true }))
-
+// Set up the view engine
 app.set('view engine', 'ejs');
+app.set('views', path.join(__dirname, 'views'));
+
+app.use(session({
+  secret: uuidv4(), //  '1b9d6bcd-bbfd-4b2d-9b5d-ab8dfbbd4bed'
+  resave: false,
+  saveUninitialized: true
+}));
 
 // load static assets
 app.use('/static', express.static(path.join(__dirname, 'public')))
-
 app.use('/assets', express.static(path.join(__dirname, 'public/assets')))
 
-app.use(session({
-    secret: uuidv4(), //  '1b9d6bcd-bbfd-4b2d-9b5d-ab8dfbbd4bed'
-    resave: false,
-    saveUninitialized: true
-}));
+// Middleware to parse incoming requests
+app.use(express.urlencoded({ extended: true }));
 
-app.use('/route', router);
+// Import and use routes
+const indexRouter = require('./router.js');
+app.use('/', indexRouter);
 
-// home route
-app.get('/', (req, res) => {
-    res.render('dashboard');
-})
-
-app.get('/dashboard', (req, res) => {
-    res.render('dashboard');
+app.listen(port, () => {
+  console.log(`Server is running on http://localhost:${port}`);
 });
-
-app.get('/product', (req, res) => {
-    res.render('product');
-});
-
-app.get('/contact', (req, res) => {
-    res.render('contact');
-});
-
-app.get('/about', (req, res) => {
-    res.render('about');
-});
-
-app.get('/search', (req, res) => {
-    res.render('search');
-});
-
-app.get('/search', (req, res) => {
-    res.render('search');
-});
-
-app.get('/pipa', (req, res) => {
-    res.render('pipa');
-});
-
-app.get('/sambungan', (req, res) => {
-    res.render('sambungan');
-});
-
-app.get('/saringan', (req, res) => {
-    res.render('saringan');
-});
-
-app.get('/base', (req, res) => {
-    res.render('base');
-});
-
-app.get('/admin', (req, res) => {
-    res.render('admin');
-});
-app.listen(port, () => { console.log("Listening to the server on http://localhost:3000") });
