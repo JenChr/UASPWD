@@ -18,7 +18,7 @@ const dbConfig = {
     database: process.env.DB_NAME,
     port: process.env.DB_PORT || 3306,
     multipleStatements: true,
-    connectionLimit: 15,
+    connectionLimit: 20,
     queueLimit: 0
 };
 
@@ -33,8 +33,8 @@ const connection = mysql.createConnection(dbConfig);
 
 // Create a connection pool
 const pool = mysql.createPool(dbConfig);
-
 const query = promisify(pool.query).bind(pool);
+const getConnection = promisify(pool.getConnection).bind(pool);
 
 // multer for local storage
 const upload = multer({
@@ -47,9 +47,9 @@ const upload = multer({
 // Middleware to check if user is authenticated
 const authenticateUser = (req, res, next) => {
     if (req.session.user) {
-        next(); // User authenticated, proceed to next middleware/route handler
+        next(); 
     } else {
-        res.redirect('/base'); // Redirect unauthorized users to login page
+        res.redirect('/base'); 
     }
 };
 
@@ -121,47 +121,58 @@ router.get('/image/:imageName', (req, res) => {
   });
 
 // Add data to table
-router.post('/add', upload.single('fileimage'), (req, res) => {
+router.post('/add', upload.single('fileimage'), async (req, res) => {
     if (!req.file) {
         return res.status(400).json({ message: 'No file uploaded' });
     }
 
     const { table, name } = req.body;
     const img = req.file.originalname;
-    // Check if img already exists in the table
-    connection.query(`SELECT * FROM ${table} WHERE img = ?`, [img], (err, result) => {
-        if (err) {
-            console.error('Error querying the database:', err);
-            return res.status(500).send('Database query failed');
-        }
+
+    try {
+        const connection = await getConnection();
+
+        // Check if image already being used
+        const result = await query(`SELECT * FROM ${table} WHERE img = ?`, [img]);
 
         if (result.length > 0) {
+            connection.release();
             return res.status(400).json({ message: 'Image already being used' });
         }
 
-        const imageName = req.file.originalname;
-        const file = bucket.file(imageName);
+        // Upload ke firebase
+        const file = bucket.file(img);
         const stream = file.createWriteStream({
             metadata: {
-              contentType: req.file.mimetype,
+                contentType: req.file.mimetype,
             },
-          });
-      
-          stream.on('error', (err) => {
-            console.error('Error uploading file:', err);
-            res.status(500).send('Error uploading file.');
-          });
-      
-          stream.end(req.file.buffer);
-        // Proceed with insertion if img is unique
-        connection.query(`INSERT INTO ${table} (name, img) VALUES (?, ?)`, [name, img], (err, result) => {
-            if (err) {
-                console.error('Error inserting into the database:', err);
-                return res.status(500).send('Database insert failed');
-            }
-            res.redirect(`/admin?table=${table}`);
         });
-    });
+
+        stream.on('error', (err) => {
+            console.error('Error uploading file:', err);
+            connection.release();
+            res.status(500).send('Error uploading file.');
+        });
+
+        stream.on('finish', async () => {
+            try {
+                // Proceed with insertion if img is unique and upload successful
+                await query(`INSERT INTO ${table} (name, img) VALUES (?, ?)`, [name, img]);
+                connection.release();
+                res.redirect(`/admin?table=${table}`);
+            } catch (err) {
+                console.error('Error inserting into the database:', err);
+                connection.release();
+                res.status(500).send('Database insert failed');
+            }
+        });
+
+        stream.end(req.file.buffer);
+
+    } catch (err) {
+        console.error('Error querying the database:', err);
+        res.status(500).send('Database query failed');
+    }
 });
 
 // Update data in table
@@ -169,7 +180,7 @@ router.post('/update/:imageName', upload.single('newimage'), (req, res) => {
     try {
         const { table, id, name } = req.body;
 
-        // If no new image uploaded, just update the name
+        // If no new image, update only the name
         if (!req.file) {
             pool.query(`UPDATE ${table} SET name = ? WHERE id = ?`, [name, id], (err, result) => {
                 if (err) {
