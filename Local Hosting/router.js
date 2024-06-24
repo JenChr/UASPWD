@@ -28,7 +28,7 @@ connection.connect((err) => {
 
 const credential = {
     user: "admin",
-    password: "admin"
+    password: "hytam"
 }
 
 // multer for local storage
